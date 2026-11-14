@@ -1,0 +1,6 @@
+{
+  "name": "FOOD RESCUE AI",
+  "description": "Don't waste it. Donate it. Make someone smile. A social-impact platform connecting surplus food and essential donors with verified NGOs, shelters, and volunteers.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
