@@ -208,6 +208,12 @@ export interface ActivityLog {
   timestamp: string;
 }
 
+export interface SiteSettings {
+  heroImageUrl: string;
+  aboutImageUrl: string;
+  updatedAt: string;
+}
+
 export interface PlatformStats {
   totalDonations: number;
   availableDonations: number;
@@ -223,7 +229,7 @@ export interface PlatformStats {
   backendStatus: {
     databaseEngine: string;
     geminiConfigured: boolean;
-    firebaseConfigured: boolean;
+    supabaseConfigured: boolean;
     demoAccountsEnabled: boolean;
   };
 }

@@ -1,19 +1,68 @@
-import { ArrowRight, CheckCircle2, MapPin, ShieldCheck, Truck, Users } from 'lucide-react';
+import { useState } from 'react';
+import {
+  ArrowRight,
+  CheckCircle2,
+  ImagePlus,
+  MapPin,
+  ShieldCheck,
+  Truck,
+  Users,
+} from 'lucide-react';
 import { SafeImage } from '../components/SafeImage.tsx';
 import { DonationStatusLabel } from '../components/StatusLabel.tsx';
+import { PhotoEditorModal } from '../components/PhotoEditorModal.tsx';
+import { updateDonationPhoto, updateSiteSettings } from '../lib/dataService.ts';
 import type { PageRoute } from '../components/Navbar.tsx';
-import type { Donation, PlatformStats } from '../types.ts';
+import type { Donation, PlatformStats, SiteSettings, UserRole } from '../types.ts';
 import { useAuth } from '../context/AuthContext.tsx';
 
 interface LandingPageProps {
   stats: PlatformStats | null;
   donations: Donation[];
-  onNavigate: (page: PageRoute) => void;
+  siteSettings: SiteSettings | null;
+  onRefresh: () => Promise<void>;
+  onNavigate: (page: PageRoute, options?: { role?: UserRole }) => void;
 }
 
-export function LandingPage({ stats, donations, onNavigate }: LandingPageProps) {
+export function LandingPage({
+  stats,
+  donations,
+  siteSettings,
+  onRefresh,
+  onNavigate,
+}: LandingPageProps) {
   const { user } = useAuth();
   const featuredDonations = donations.filter((d) => d.status === 'Available').slice(0, 3);
+  const heroUrl =
+    siteSettings?.heroImageUrl || '/src/assets/images/hero_food_rescue_1794669342092.jpg';
+
+  const [photoEditTarget, setPhotoEditTarget] = useState<{
+    kind: 'hero' | 'donation';
+    donationId?: string;
+    title: string;
+    url: string;
+  } | null>(null);
+  const [roleNotice, setRoleNotice] = useState<string | null>(null);
+
+  const handleRoleCardClick = (targetRole: UserRole, label: string) => {
+    setRoleNotice(null);
+    if (user) {
+      if (user.role === targetRole) {
+        onNavigate('dashboard');
+        return;
+      }
+      setRoleNotice(
+        `You are currently signed in as ${user.role.toUpperCase()}. Role workspaces are strictly restricted to your assigned account role — sign out first to access or register as ${label}.`
+      );
+      return;
+    }
+
+    if (targetRole === 'admin') {
+      onNavigate('signin', { role: 'admin' });
+    } else {
+      onNavigate('register', { role: targetRole });
+    }
+  };
 
   return (
     <div className="bg-white">
@@ -41,7 +90,7 @@ export function LandingPage({ stats, donations, onNavigate }: LandingPageProps) 
             <div className="flex flex-wrap items-center gap-4 pt-1">
               <button
                 type="button"
-                onClick={() => onNavigate(user ? 'dashboard' : 'auth')}
+                onClick={() => onNavigate(user ? 'dashboard' : 'signin')}
                 className="inline-flex items-center gap-2 px-6 py-3 text-sm font-semibold text-white bg-emerald-700 hover:bg-emerald-800 rounded-lg transition-colors whitespace-nowrap"
               >
                 <span>{user ? 'Go to Role Workspace' : 'Start Donating or Join'}</span>
@@ -58,12 +107,28 @@ export function LandingPage({ stats, donations, onNavigate }: LandingPageProps) 
           </div>
 
           <div className="lg:col-span-6">
-            <div className="h-72 sm:h-96 lg:h-full min-h-[340px] rounded-xl overflow-hidden border border-emerald-950/10 bg-[#F8FAF9]">
+            <div className="relative h-72 sm:h-96 lg:h-full min-h-[340px] rounded-xl overflow-hidden border border-emerald-950/10 bg-[#F8FAF9]">
               <SafeImage
-                src="/src/assets/images/hero_food_rescue_1794669342092.jpg"
+                src={heroUrl}
                 alt="Volunteers packing fresh produce, bread, and prepared meal boxes at a community food rescue hub"
                 className="w-full h-full object-cover"
               />
+              {user?.role === 'admin' && (
+                <button
+                  type="button"
+                  onClick={() =>
+                    setPhotoEditTarget({
+                      kind: 'hero',
+                      title: 'Hero Banner Photo',
+                      url: heroUrl,
+                    })
+                  }
+                  className="absolute bottom-3 right-3 inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold rounded-lg bg-white/95 text-[#0F1F17] border border-emerald-950/15 shadow-xs hover:bg-white"
+                >
+                  <ImagePlus className="w-3.5 h-3.5 text-emerald-700" />
+                  <span>Edit Photo</span>
+                </button>
+              )}
             </div>
           </div>
         </div>
@@ -196,92 +261,176 @@ export function LandingPage({ stats, donations, onNavigate }: LandingPageProps) 
           </div>
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            {featuredDonations.map((item) => (
-              <article
-                key={item.id}
-                className="bg-white border border-emerald-950/10 rounded-xl overflow-hidden flex flex-col"
-              >
-                <div className="h-48 bg-[#F8FAF9] border-b border-emerald-950/10">
-                  <SafeImage
-                    src={item.imageUrl}
-                    alt={item.title}
-                    fallbackTitle={item.title}
-                    className="w-full h-full object-cover"
-                  />
-                </div>
-                <div className="p-5 flex-1 flex flex-col justify-between space-y-4">
-                  <div className="space-y-2">
-                    <div className="flex items-center justify-between gap-2">
-                      <span className="text-xs text-[#47554E]">
-                        {item.category} · {item.subCategory}
-                      </span>
-                      <DonationStatusLabel status={item.status} />
+            {featuredDonations.map((item) => {
+              const canEditPhoto =
+                user && (user.role === 'admin' || user.id === item.donorId);
+              return (
+                <article
+                  key={item.id}
+                  className="bg-white border border-emerald-950/10 rounded-xl overflow-hidden flex flex-col"
+                >
+                  <div className="relative h-48 bg-[#F8FAF9] border-b border-emerald-950/10">
+                    <SafeImage
+                      src={item.imageUrl}
+                      alt={item.title}
+                      fallbackTitle={item.title}
+                      className="w-full h-full object-cover"
+                    />
+                    {canEditPhoto && (
+                      <button
+                        type="button"
+                        onClick={() =>
+                          setPhotoEditTarget({
+                            kind: 'donation',
+                            donationId: item.id,
+                            title: item.title,
+                            url: item.imageUrl,
+                          })
+                        }
+                        className="absolute bottom-2.5 right-2.5 inline-flex items-center gap-1 px-2.5 py-1 text-xs font-semibold rounded-lg bg-white/95 text-[#0F1F17] border border-emerald-950/15 shadow-xs hover:bg-white"
+                      >
+                        <ImagePlus className="w-3.5 h-3.5 text-emerald-700" />
+                        <span>Edit Photo</span>
+                      </button>
+                    )}
+                  </div>
+                  <div className="p-5 flex-1 flex flex-col justify-between space-y-4">
+                    <div className="space-y-2">
+                      <div className="flex items-center justify-between gap-2">
+                        <span className="text-xs text-[#47554E]">
+                          {item.category} · {item.subCategory}
+                        </span>
+                        <DonationStatusLabel status={item.status} />
+                      </div>
+                      <h3 className="font-display text-lg font-semibold text-[#0F1F17] leading-snug">
+                        {item.title}
+                      </h3>
+                      <p className="text-sm text-[#47554E] line-clamp-2">{item.description}</p>
                     </div>
-                    <h3 className="font-display text-lg font-semibold text-[#0F1F17] leading-snug">
-                      {item.title}
-                    </h3>
-                    <p className="text-sm text-[#47554E] line-clamp-2">{item.description}</p>
-                  </div>
 
-                  <div className="pt-3 border-t border-emerald-950/10 flex items-center justify-between text-xs text-[#47554E]">
-                    <span className="inline-flex items-center gap-1">
-                      <MapPin className="w-3.5 h-3.5 text-emerald-700" />
-                      {item.city}
-                    </span>
-                    <span className="font-mono font-semibold tabular-nums text-[#0F1F17]">
-                      {item.quantityValue} {item.quantityUnit}
-                    </span>
+                    <div className="pt-3 border-t border-emerald-950/10 flex items-center justify-between text-xs text-[#47554E]">
+                      <span className="inline-flex items-center gap-1">
+                        <MapPin className="w-3.5 h-3.5 text-emerald-700" />
+                        {item.city}
+                      </span>
+                      <span className="font-mono font-semibold tabular-nums text-[#0F1F17]">
+                        {item.quantityValue} {item.quantityUnit}
+                      </span>
+                    </div>
                   </div>
-                </div>
-              </article>
-            ))}
+                </article>
+              );
+            })}
           </div>
         )}
       </section>
 
       {/* Four Roles Summary */}
       <section className="border-t border-emerald-950/10 bg-[#F8FAF9] py-16">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-6">
+          {roleNotice && (
+            <div
+              role="alert"
+              className="p-4 rounded-xl bg-amber-50 border border-amber-200 text-sm text-amber-950 flex flex-col sm:flex-row sm:items-center justify-between gap-3"
+            >
+              <span>{roleNotice}</span>
+              <div className="flex items-center gap-2 shrink-0">
+                <button
+                  type="button"
+                  onClick={() => onNavigate('dashboard')}
+                  className="px-3 py-1.5 text-xs font-semibold text-white bg-emerald-700 hover:bg-emerald-800 rounded-lg"
+                >
+                  Open My Workspace
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setRoleNotice(null)}
+                  className="px-2.5 py-1.5 text-xs font-medium text-amber-900 hover:underline"
+                >
+                  Dismiss
+                </button>
+              </div>
+            </div>
+          )}
+
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-            <div className="space-y-2">
-              <CheckCircle2 className="w-5 h-5 text-emerald-700" />
-              <h3 className="font-display text-base font-semibold text-[#0F1F17]">Donors</h3>
-              <p className="text-sm text-[#47554E]">
-                Publish surplus meals or goods in under a minute, manage incoming NGO requests, and
-                inspect AI-ranked recipient recommendations.
-              </p>
-            </div>
-            <div className="space-y-2">
-              <Users className="w-5 h-5 text-emerald-700" />
-              <h3 className="font-display text-base font-semibold text-[#0F1F17]">
-                NGOs &amp; Shelters
-              </h3>
-              <p className="text-sm text-[#47554E]">
-                Submit verification credentials, publish ongoing resource needs, claim matching
-                donations, and confirm physical delivery receipts.
-              </p>
-            </div>
-            <div className="space-y-2">
-              <Truck className="w-5 h-5 text-emerald-700" />
-              <h3 className="font-display text-base font-semibold text-[#0F1F17]">Volunteers</h3>
-              <p className="text-sm text-[#47554E]">
-                Browse scheduled pickup routes in your city, claim tasks, and update real-time
-                pickup and drop-off status.
-              </p>
-            </div>
-            <div className="space-y-2">
-              <ShieldCheck className="w-5 h-5 text-emerald-700" />
-              <h3 className="font-display text-base font-semibold text-[#0F1F17]">
-                Administrators
-              </h3>
-              <p className="text-sm text-[#47554E]">
-                Verify NGO registrations, moderate safety-sensitive listings, resolve user reports,
-                and monitor platform-wide activity.
-              </p>
-            </div>
+            {(
+              [
+                {
+                  role: 'donor' as UserRole,
+                  title: 'Donors',
+                  description:
+                    'Publish surplus meals or goods in under a minute, manage incoming NGO requests, and inspect AI-ranked recipient recommendations.',
+                  cta: user?.role === 'donor' ? 'Open Donor Workspace' : 'Register as Donor',
+                  icon: CheckCircle2,
+                },
+                {
+                  role: 'ngo' as UserRole,
+                  title: 'NGOs & Shelters',
+                  description:
+                    'Submit verification credentials, publish ongoing resource needs, claim matching donations, and confirm physical delivery receipts.',
+                  cta: user?.role === 'ngo' ? 'Open NGO Workspace' : 'Register NGO / Shelter',
+                  icon: Users,
+                },
+                {
+                  role: 'volunteer' as UserRole,
+                  title: 'Volunteers',
+                  description:
+                    'Browse scheduled pickup routes in your city, claim tasks, and update real-time pickup and drop-off status.',
+                  cta: user?.role === 'volunteer' ? 'Open Volunteer Dispatch' : 'Join as Volunteer',
+                  icon: Truck,
+                },
+                {
+                  role: 'admin' as UserRole,
+                  title: 'Administrators',
+                  description:
+                    'Verify NGO registrations, moderate safety-sensitive listings, resolve user reports, and monitor platform-wide activity.',
+                  cta: user?.role === 'admin' ? 'Open Admin Console' : 'Administrator Sign In',
+                  icon: ShieldCheck,
+                },
+              ] as const
+            ).map((card) => {
+              const Icon = card.icon;
+              return (
+                <button
+                  key={card.role}
+                  type="button"
+                  onClick={() => handleRoleCardClick(card.role, card.title)}
+                  className="group text-left bg-white border border-emerald-950/10 hover:border-emerald-700/40 rounded-xl p-6 flex flex-col justify-between gap-4 transition-all hover:shadow-xs focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-700"
+                >
+                  <div className="space-y-2">
+                    <Icon className="w-5 h-5 text-emerald-700" />
+                    <h3 className="font-display text-base font-semibold text-[#0F1F17]">
+                      {card.title}
+                    </h3>
+                    <p className="text-sm text-[#47554E] leading-relaxed">{card.description}</p>
+                  </div>
+                  <span className="inline-flex items-center gap-1.5 text-xs font-semibold text-emerald-700 group-hover:text-emerald-900">
+                    <span>{card.cta}</span>
+                    <ArrowRight className="w-3.5 h-3.5 transition-transform group-hover:translate-x-0.5" />
+                  </span>
+                </button>
+              );
+            })}
           </div>
         </div>
       </section>
+
+      <PhotoEditorModal
+        isOpen={photoEditTarget !== null}
+        title={photoEditTarget?.title || 'Photo'}
+        initialUrl={photoEditTarget?.url || heroUrl}
+        onClose={() => setPhotoEditTarget(null)}
+        onSave={async ({ url }) => {
+          if (!photoEditTarget) return;
+          if (photoEditTarget.kind === 'hero') {
+            await updateSiteSettings({ heroImageUrl: url });
+          } else if (photoEditTarget.donationId) {
+            await updateDonationPhoto(photoEditTarget.donationId, url, user);
+          }
+          await onRefresh();
+        }}
+      />
     </div>
   );
 }

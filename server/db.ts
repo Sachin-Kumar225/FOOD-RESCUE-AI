@@ -9,6 +9,7 @@ import type {
   ModerationReport,
   NgoNeed,
   Organisation,
+  SiteSettings,
   User,
   VolunteerTask,
 } from '../src/types.ts';
@@ -30,7 +31,14 @@ export interface DatabaseSchema {
   moderationReports: ModerationReport[];
   contactMessages: ContactMessage[];
   activityLogs: ActivityLog[];
+  siteSettings: SiteSettings;
 }
+
+export const DEFAULT_SITE_SETTINGS: SiteSettings = {
+  heroImageUrl: '/src/assets/images/hero_food_rescue_1794669342092.jpg',
+  aboutImageUrl: '/src/assets/images/about_community_hub_1794669343508.jpg',
+  updatedAt: new Date().toISOString(),
+};
 
 const DATA_DIR = path.join(process.cwd(), 'data');
 const DB_FILE = path.join(DATA_DIR, 'food_rescue_db.json');
@@ -603,6 +611,7 @@ export function createSeedData(): DatabaseSchema {
     moderationReports,
     contactMessages,
     activityLogs,
+    siteSettings: { ...DEFAULT_SITE_SETTINGS, updatedAt: new Date().toISOString() },
   };
 }
 
@@ -619,6 +628,10 @@ export function getDb(): DatabaseSchema {
   try {
     const raw = fs.readFileSync(DB_FILE, 'utf-8');
     dbCache = JSON.parse(raw) as DatabaseSchema;
+    if (!dbCache.siteSettings) {
+      dbCache.siteSettings = { ...DEFAULT_SITE_SETTINGS, updatedAt: new Date().toISOString() };
+      saveDb(dbCache);
+    }
     return dbCache;
   } catch {
     dbCache = createSeedData();

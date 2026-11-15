@@ -1,15 +1,23 @@
 import { useState } from 'react';
-import { Menu, X } from 'lucide-react';
+import { ArrowLeft, Menu, X } from 'lucide-react';
 import { useAuth } from '../context/AuthContext.tsx';
 
-export type PageRoute = 'home' | 'browse' | 'about' | 'contact' | 'auth' | 'dashboard';
+export type PageRoute =
+  | 'home'
+  | 'browse'
+  | 'about'
+  | 'contact'
+  | 'signin'
+  | 'register'
+  | 'dashboard';
 
 interface NavbarProps {
   currentPage: PageRoute;
   onNavigate: (page: PageRoute) => void;
+  onBack: () => void;
 }
 
-export function Navbar({ currentPage, onNavigate }: NavbarProps) {
+export function Navbar({ currentPage, onNavigate, onBack }: NavbarProps) {
   const { user } = useAuth();
   const [mobileOpen, setMobileOpen] = useState(false);
 
@@ -66,7 +74,7 @@ export function Navbar({ currentPage, onNavigate }: NavbarProps) {
         <div className="flex items-center gap-3 shrink-0">
           <button
             type="button"
-            onClick={() => handleNav(user ? 'dashboard' : 'auth')}
+            onClick={() => handleNav(user ? 'dashboard' : 'signin')}
             className="hidden md:inline-flex items-center justify-center px-4 py-2 text-sm font-medium text-white bg-emerald-700 hover:bg-emerald-800 rounded-lg transition-colors whitespace-nowrap shrink-0 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-700 focus-visible:ring-offset-2"
           >
             {user ? 'Open Workspace' : 'Sign In'}
@@ -101,13 +109,31 @@ export function Navbar({ currentPage, onNavigate }: NavbarProps) {
           ))}
           <button
             type="button"
-            onClick={() => handleNav(user ? 'dashboard' : 'auth')}
+            onClick={() => handleNav(user ? 'dashboard' : 'signin')}
             className="w-full mt-2 px-4 py-2.5 text-sm font-medium text-white bg-emerald-700 hover:bg-emerald-800 rounded-lg"
           >
             {user ? 'Open Workspace' : 'Sign In'}
           </button>
         </div>
       )}
+
+      {/* Back button directly below FOOD RESCUE AI heading/logo */}
+      <div className="border-t border-emerald-950/10 bg-white">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-2 flex items-center">
+          <button
+            type="button"
+            onClick={() => {
+              setMobileOpen(false);
+              onBack();
+            }}
+            aria-label="Go back to previous page or section"
+            className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs sm:text-sm font-medium text-[#0F1F17] bg-white border border-emerald-950/15 hover:bg-[#F8FAF9] rounded-lg transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-700"
+          >
+            <ArrowLeft className="w-4 h-4 text-[#0F1F17] shrink-0" />
+            <span>Back</span>
+          </button>
+        </div>
+      </div>
     </header>
   );
 }

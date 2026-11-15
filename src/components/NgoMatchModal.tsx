@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { Building2, Loader2, MapPin, X } from 'lucide-react';
-import { apiRequest } from '../lib/api.ts';
+import { fetchAiNgoMatches } from '../lib/dataService.ts';
 import type { Donation, NgoMatchSuggestion } from '../types.ts';
 
 interface NgoMatchModalProps {
@@ -20,12 +20,9 @@ export function NgoMatchModal({ donation, onClose }: NgoMatchModalProps) {
     setError('');
     setSuggestions([]);
 
-    apiRequest<{ suggestions: NgoMatchSuggestion[] }>('/api/ai/match-ngos', {
-      method: 'POST',
-      body: JSON.stringify({ donation }),
-    })
-      .then((res) => {
-        if (!cancelled) setSuggestions(res.suggestions);
+    fetchAiNgoMatches(donation)
+      .then((list) => {
+        if (!cancelled) setSuggestions(list);
       })
       .catch((err) => {
         if (!cancelled) {

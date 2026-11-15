@@ -1,10 +1,30 @@
 import type { PageRoute } from './Navbar.tsx';
+import type { UserRole } from '../types.ts';
+import { useAuth } from '../context/AuthContext.tsx';
 
 interface FooterProps {
-  onNavigate: (page: PageRoute) => void;
+  onNavigate: (page: PageRoute, options?: { role?: UserRole }) => void;
 }
 
 export function Footer({ onNavigate }: FooterProps) {
+  const { user } = useAuth();
+
+  const handleRoleLink = (targetRole: UserRole) => {
+    if (user) {
+      if (user.role === targetRole) {
+        onNavigate('dashboard');
+      } else {
+        onNavigate('dashboard', { role: targetRole });
+      }
+      return;
+    }
+    if (targetRole === 'admin') {
+      onNavigate('signin', { role: 'admin' });
+    } else {
+      onNavigate('register', { role: targetRole });
+    }
+  };
+
   return (
     <footer className="border-t border-emerald-950/10 bg-[#F8FAF9] text-[#47554E]">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
@@ -41,26 +61,50 @@ export function Footer({ onNavigate }: FooterProps) {
                 onClick={() => onNavigate('about')}
                 className="hover:text-[#0F1F17] transition-colors"
               >
-                About & Safety Rules
+                About &amp; Safety Rules
               </button>
               <button
                 type="button"
                 onClick={() => onNavigate('contact')}
                 className="hover:text-[#0F1F17] transition-colors"
               >
-                Contact & Setup Guide
+                Contact &amp; Setup Guide
               </button>
             </div>
           </div>
 
           <div className="space-y-2.5 text-sm">
             <p className="font-semibold text-[#0F1F17]">Participant Roles</p>
-            <ul className="space-y-2 text-[#47554E]">
-              <li>Food & Essentials Donors</li>
-              <li>Verified NGOs & Shelters</li>
-              <li>Pickup Volunteers</li>
-              <li>Platform Administrators</li>
-            </ul>
+            <div className="flex flex-col items-start gap-2 text-[#47554E]">
+              <button
+                type="button"
+                onClick={() => handleRoleLink('donor')}
+                className="hover:text-[#0F1F17] transition-colors text-left"
+              >
+                Food &amp; Essentials Donors
+              </button>
+              <button
+                type="button"
+                onClick={() => handleRoleLink('ngo')}
+                className="hover:text-[#0F1F17] transition-colors text-left"
+              >
+                Verified NGOs &amp; Shelters
+              </button>
+              <button
+                type="button"
+                onClick={() => handleRoleLink('volunteer')}
+                className="hover:text-[#0F1F17] transition-colors text-left"
+              >
+                Pickup Volunteers
+              </button>
+              <button
+                type="button"
+                onClick={() => handleRoleLink('admin')}
+                className="hover:text-[#0F1F17] transition-colors text-left"
+              >
+                Platform Administrators
+              </button>
+            </div>
           </div>
         </div>
 

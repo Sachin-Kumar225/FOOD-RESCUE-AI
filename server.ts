@@ -18,6 +18,7 @@ import {
 } from './src/types.ts';
 import {
   hashPassword,
+  isServerSupabaseConfigured,
   requireAuth,
   requireRole,
   signToken,
@@ -29,6 +30,7 @@ import { evaluateFoodSafetyEligibility } from './server/safety.ts';
 import {
   categorizeDonationImage,
   extractDonationDetailsFromText,
+  extractReadableAiError,
   generateDonationDescription,
   isGeminiConfigured,
   matchNgosForDonation,
@@ -49,18 +51,22 @@ async function startServer() {
 
   // Health & status
   app.get('/api/health', (_req, res) => {
+    const supabaseActive = isServerSupabaseConfigured();
     res.json({
       ok: true,
       service: 'FOOD RESCUE AI',
       geminiConfigured: isGeminiConfigured(),
-      firebaseConfigured: false,
-      databaseEngine: 'Local Persistent JSON Store (Server-Side)',
+      supabaseConfigured: supabaseActive,
+      databaseEngine: supabaseActive
+        ? 'Supabase PostgreSQL + Auth + Storage'
+        : 'Express Server Persistent Store (Demo Mode)',
     });
   });
 
   // Real platform statistics (strictly computed from stored records)
   app.get('/api/stats', (_req, res) => {
     const db = getDb();
+    const supabaseActive = isServerSupabaseConfigured();
     const confirmedDonationIds = new Set(db.deliveryRecords.map((r) => r.donationId));
 
     const completedDonations = db.donations.filter(
@@ -102,10 +108,12 @@ async function startServer() {
       statusPipeline,
       recentActivities: db.activityLogs.slice(0, 12),
       backendStatus: {
-        databaseEngine: 'Express Server Persistent Store',
+        databaseEngine: supabaseActive
+          ? 'Supabase PostgreSQL + Auth + Storage'
+          : 'Express Server Persistent Store',
         geminiConfigured: isGeminiConfigured(),
-        firebaseConfigured: false,
-        demoAccountsEnabled: true,
+        supabaseConfigured: supabaseActive,
+        demoAccountsEnabled: !supabaseActive,
       },
     };
 
@@ -521,6 +529,14 @@ async function startServer() {
         return;
       }
 
+      if (req.body.quantityValue !== undefined) {
+        const nextQty = Number(req.body.quantityValue);
+        if (!Number.isFinite(nextQty) || nextQty <= 0) {
+          res.status(400).json({ error: 'Quantity must be a positive number.' });
+          return;
+        }
+      }
+
       const updated: Donation = {
         ...existing,
         title: req.body.title ? String(req.body.title).trim() : existing.title,
@@ -547,6 +563,86 @@ async function startServer() {
       db.donations[idx] = updated;
       saveDb(db);
       res.json({ donation: updated });
+    }
+  );
+
+  // Quick photo update for any donation (Donor owner or Admin)
+  app.patch(
+    '/api/donations/:id/photo',
+    requireAuth,
+    requireRole('donor', 'admin'),
+    (req: AuthenticatedRequest, res) => {
+      const db = getDb();
+      const idx = db.donations.findIndex((d) => d.id === req.params.id);
+      if (idx === -1) {
+        res.status(404).json({ error: 'Donation not found.' });
+        return;
+      }
+      const existing = db.donations[idx];
+      if (req.auth!.role !== 'admin' && existing.donorId !== req.auth!.userId) {
+        res.status(403).json({ error: 'You can only edit photos on your own donation listings.' });
+        return;
+      }
+      const { imageUrl } = req.body || {};
+      if (!imageUrl || typeof imageUrl !== 'string' || !imageUrl.trim()) {
+        res.status(400).json({ error: 'Valid imageUrl is required.' });
+        return;
+      }
+      const updated: Donation = {
+        ...existing,
+        imageUrl: imageUrl.trim(),
+        updatedAt: new Date().toISOString(),
+      };
+      db.donations[idx] = updated;
+      logActivity(
+        db,
+        req.auth!.userId,
+        req.auth!.email,
+        req.auth!.role,
+        'Updated donation photo',
+        'donation',
+        existing.title
+      );
+      saveDb(db);
+      res.json({ donation: updated });
+    }
+  );
+
+  // Site editorial photos (Hero & About)
+  app.get('/api/site-settings', (_req, res) => {
+    const db = getDb();
+    res.json({ siteSettings: db.siteSettings });
+  });
+
+  app.put(
+    '/api/site-settings',
+    requireAuth,
+    requireRole('admin'),
+    (req: AuthenticatedRequest, res) => {
+      const db = getDb();
+      const { heroImageUrl, aboutImageUrl } = req.body || {};
+      db.siteSettings = {
+        heroImageUrl:
+          typeof heroImageUrl === 'string' && heroImageUrl.trim()
+            ? heroImageUrl.trim()
+            : db.siteSettings.heroImageUrl,
+        aboutImageUrl:
+          typeof aboutImageUrl === 'string' && aboutImageUrl.trim()
+            ? aboutImageUrl.trim()
+            : db.siteSettings.aboutImageUrl,
+        updatedAt: new Date().toISOString(),
+      };
+      logActivity(
+        db,
+        req.auth!.userId,
+        'Administrator',
+        'admin',
+        'Updated site editorial photo',
+        'site',
+        'Editorial Imagery'
+      );
+      saveDb(db);
+      res.json({ siteSettings: db.siteSettings });
     }
   );
 
@@ -1175,24 +1271,32 @@ async function startServer() {
 
   // Contact form
   app.post('/api/contact', (req, res) => {
-    const { name, email, subject, roleInterest, message } = req.body || {};
-    if (!name || !email || !message) {
-      res.status(400).json({ error: 'Name, email, and message are required.' });
+    const raw = req.body || {};
+    const name = String(raw.name ?? '').trim();
+    const email = String(raw.email ?? '').trim();
+    const subject = String(raw.subject ?? '').trim();
+    const roleInterest = String(raw.roleInterest ?? '').trim();
+    const message = String(raw.message ?? '').trim();
+
+    if (!name || !email || !subject || !roleInterest || !message) {
+      res.status(400).json({
+        error: 'Name, email, topic, participant type, and message are required.',
+      });
       return;
     }
     const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!emailPattern.test(String(email).trim())) {
+    if (!emailPattern.test(email)) {
       res.status(400).json({ error: 'Please provide a valid email address.' });
       return;
     }
     const db = getDb();
     const entry = {
       id: `msg-${Date.now()}-${crypto.randomBytes(2).toString('hex')}`,
-      name: String(name).trim(),
-      email: String(email).trim(),
-      subject: String(subject || 'General Inquiry').trim(),
-      roleInterest: String(roleInterest || 'General').trim(),
-      message: String(message).trim(),
+      name,
+      email,
+      subject,
+      roleInterest,
+      message,
       createdAt: new Date().toISOString(),
     };
     db.contactMessages.unshift(entry);
@@ -1362,7 +1466,7 @@ async function startServer() {
       });
       res.json(result);
     } catch (error) {
-      const message = error instanceof Error ? error.message : 'AI description generation failed.';
+      const message = extractReadableAiError(error, 'AI description generation failed.');
       res.status(500).json({ error: message });
     }
   });
@@ -1385,7 +1489,7 @@ async function startServer() {
       });
       res.json(result);
     } catch (error) {
-      const message = error instanceof Error ? error.message : 'AI image categorization failed.';
+      const message = extractReadableAiError(error, 'AI image categorization failed.');
       res.status(500).json({ error: message });
     }
   });
@@ -1400,19 +1504,23 @@ async function startServer() {
       const result = await extractDonationDetailsFromText(String(text));
       res.json(result);
     } catch (error) {
-      const message = error instanceof Error ? error.message : 'AI detail extraction failed.';
+      const message = extractReadableAiError(error, 'AI detail extraction failed.');
       res.status(500).json({ error: message });
     }
   });
 
   app.post('/api/ai/match-ngos', requireAuth, async (req, res) => {
     try {
-      const { donation } = req.body || {};
+      const { donation, organisations, needs } = req.body || {};
       if (!donation || !donation.category) {
         res.status(400).json({ error: 'Donation details are required for NGO matching.' });
         return;
       }
       const db = getDb();
+      const orgList: Organisation[] =
+        Array.isArray(organisations) && organisations.length > 0 ? organisations : db.organisations;
+      const needList: NgoNeed[] = Array.isArray(needs) ? needs : db.ngoNeeds;
+
       const suggestions = await matchNgosForDonation({
         donation: {
           title: String(donation.title || 'Surplus Donation'),
@@ -1422,12 +1530,12 @@ async function startServer() {
           city: String(donation.city || 'Bengaluru'),
           description: String(donation.description || ''),
         },
-        organisations: db.organisations,
-        needs: db.ngoNeeds,
+        organisations: orgList,
+        needs: needList,
       });
       res.json({ suggestions });
     } catch (error) {
-      const message = error instanceof Error ? error.message : 'NGO matching failed.';
+      const message = extractReadableAiError(error, 'NGO matching failed.');
       res.status(500).json({ error: message });
     }
   });

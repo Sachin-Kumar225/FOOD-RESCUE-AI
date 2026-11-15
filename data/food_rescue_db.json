@@ -4,92 +4,92 @@
       "id": "usr-donor-1",
       "name": "Greenleaf Bistro & Catering",
       "email": "donor@foodrescue.demo",
-      "passwordHash": "7a429894d4190d54762466fb49024392:dd69f1cd75b8287e300a17766dbb1536cd530f1bf648edbd25b49a80f5778d7c36b3535da6474ca1e52557febae31dcf1738e0d6ed7fa44954b8335d40c258c3",
+      "passwordHash": "01bbe212337dfcf9ea7c70dfdf55c1cb:029171f46a6bf4f45b37a9e93f3830dcdf037388cff6e33ebf2624948c99d102717360f8c4f9c2a9b27acbd02ad0de52dec96a2a7cbca79dfe1ae92282ad214d",
       "role": "donor",
       "phone": "+1-555-0142",
       "city": "Bengaluru",
       "address": "42 Indiranagar 100ft Road, Bengaluru",
       "status": "active",
       "isDemo": true,
-      "createdAt": "2026-11-04T15:21:48.919Z"
+      "createdAt": "2026-11-05T14:55:21.821Z"
     },
     {
       "id": "usr-donor-2",
       "name": "Harvest Market Cooperative",
       "email": "harvest@foodrescue.demo",
-      "passwordHash": "7a429894d4190d54762466fb49024392:dd69f1cd75b8287e300a17766dbb1536cd530f1bf648edbd25b49a80f5778d7c36b3535da6474ca1e52557febae31dcf1738e0d6ed7fa44954b8335d40c258c3",
+      "passwordHash": "01bbe212337dfcf9ea7c70dfdf55c1cb:029171f46a6bf4f45b37a9e93f3830dcdf037388cff6e33ebf2624948c99d102717360f8c4f9c2a9b27acbd02ad0de52dec96a2a7cbca79dfe1ae92282ad214d",
       "role": "donor",
       "phone": "+1-555-0168",
       "city": "Bengaluru",
       "address": "18 Koramangala 4th Block, Bengaluru",
       "status": "active",
       "isDemo": true,
-      "createdAt": "2026-11-07T03:21:48.919Z"
+      "createdAt": "2026-11-08T02:55:21.821Z"
     },
     {
       "id": "usr-ngo-1",
       "name": "Hope Haven Shelter Coordinator",
       "email": "ngo@foodrescue.demo",
-      "passwordHash": "7a429894d4190d54762466fb49024392:dd69f1cd75b8287e300a17766dbb1536cd530f1bf648edbd25b49a80f5778d7c36b3535da6474ca1e52557febae31dcf1738e0d6ed7fa44954b8335d40c258c3",
+      "passwordHash": "01bbe212337dfcf9ea7c70dfdf55c1cb:029171f46a6bf4f45b37a9e93f3830dcdf037388cff6e33ebf2624948c99d102717360f8c4f9c2a9b27acbd02ad0de52dec96a2a7cbca79dfe1ae92282ad214d",
       "role": "ngo",
       "phone": "+1-555-0194",
       "city": "Bengaluru",
       "address": "77 Ulsoor Lake Road, Bengaluru",
       "status": "active",
       "isDemo": true,
-      "createdAt": "2026-11-01T07:21:48.919Z"
+      "createdAt": "2026-11-02T06:55:21.821Z"
     },
     {
       "id": "usr-ngo-2",
       "name": "Little Steps Children Home",
       "email": "littlesteps@foodrescue.demo",
-      "passwordHash": "7a429894d4190d54762466fb49024392:dd69f1cd75b8287e300a17766dbb1536cd530f1bf648edbd25b49a80f5778d7c36b3535da6474ca1e52557febae31dcf1738e0d6ed7fa44954b8335d40c258c3",
+      "passwordHash": "01bbe212337dfcf9ea7c70dfdf55c1cb:029171f46a6bf4f45b37a9e93f3830dcdf037388cff6e33ebf2624948c99d102717360f8c4f9c2a9b27acbd02ad0de52dec96a2a7cbca79dfe1ae92282ad214d",
       "role": "ngo",
       "phone": "+1-555-0121",
       "city": "Bengaluru",
       "address": "15 Jayanagar 3rd Block, Bengaluru",
       "status": "active",
       "isDemo": true,
-      "createdAt": "2026-11-02T23:21:48.919Z"
+      "createdAt": "2026-11-03T22:55:21.821Z"
     },
     {
       "id": "usr-ngo-3",
       "name": "Sunrise Community Pantry",
       "email": "sunrise@foodrescue.demo",
-      "passwordHash": "7a429894d4190d54762466fb49024392:dd69f1cd75b8287e300a17766dbb1536cd530f1bf648edbd25b49a80f5778d7c36b3535da6474ca1e52557febae31dcf1738e0d6ed7fa44954b8335d40c258c3",
+      "passwordHash": "01bbe212337dfcf9ea7c70dfdf55c1cb:029171f46a6bf4f45b37a9e93f3830dcdf037388cff6e33ebf2624948c99d102717360f8c4f9c2a9b27acbd02ad0de52dec96a2a7cbca79dfe1ae92282ad214d",
       "role": "ngo",
       "phone": "+1-555-0177",
       "city": "Mysuru",
       "address": "9 Gokulam Main Road, Mysuru",
       "status": "active",
       "isDemo": true,
-      "createdAt": "2026-11-11T15:21:48.919Z"
+      "createdAt": "2026-11-12T14:55:21.821Z"
     },
     {
       "id": "usr-vol-1",
       "name": "Aarav Nair",
       "email": "volunteer@foodrescue.demo",
-      "passwordHash": "7a429894d4190d54762466fb49024392:dd69f1cd75b8287e300a17766dbb1536cd530f1bf648edbd25b49a80f5778d7c36b3535da6474ca1e52557febae31dcf1738e0d6ed7fa44954b8335d40c258c3",
+      "passwordHash": "01bbe212337dfcf9ea7c70dfdf55c1cb:029171f46a6bf4f45b37a9e93f3830dcdf037388cff6e33ebf2624948c99d102717360f8c4f9c2a9b27acbd02ad0de52dec96a2a7cbca79dfe1ae92282ad214d",
       "role": "volunteer",
       "phone": "+1-555-0183",
       "city": "Bengaluru",
       "address": "Domlur Layout, Bengaluru",
       "status": "active",
       "isDemo": true,
-      "createdAt": "2026-11-06T07:21:48.919Z"
+      "createdAt": "2026-11-07T06:55:21.821Z"
     },
     {
       "id": "usr-admin-1",
       "name": "Maya Deshmukh",
       "email": "admin@foodrescue.demo",
-      "passwordHash": "7a429894d4190d54762466fb49024392:dd69f1cd75b8287e300a17766dbb1536cd530f1bf648edbd25b49a80f5778d7c36b3535da6474ca1e52557febae31dcf1738e0d6ed7fa44954b8335d40c258c3",
+      "passwordHash": "01bbe212337dfcf9ea7c70dfdf55c1cb:029171f46a6bf4f45b37a9e93f3830dcdf037388cff6e33ebf2624948c99d102717360f8c4f9c2a9b27acbd02ad0de52dec96a2a7cbca79dfe1ae92282ad214d",
       "role": "admin",
       "phone": "+1-555-0100",
       "city": "Bengaluru",
       "address": "Civic Operations Desk, Bengaluru",
       "status": "active",
       "isDemo": true,
-      "createdAt": "2026-10-28T23:21:48.919Z"
+      "createdAt": "2026-10-29T22:55:21.821Z"
     }
   ],
   "organisations": [
@@ -106,8 +106,8 @@
       "documentsSummary": "80G Charitable Trust Certificate & Municipal Kitchen Permit",
       "verificationStatus": "verified",
       "verifiedBy": "usr-admin-1",
-      "verifiedAt": "2026-11-02T03:21:48.919Z",
-      "createdAt": "2026-11-01T07:21:48.919Z"
+      "verifiedAt": "2026-11-03T02:55:21.821Z",
+      "createdAt": "2026-11-02T06:55:21.821Z"
     },
     {
       "id": "org-2",
@@ -122,8 +122,8 @@
       "documentsSummary": "Child Welfare Registration & Annual Audit Filing",
       "verificationStatus": "verified",
       "verifiedBy": "usr-admin-1",
-      "verifiedAt": "2026-11-03T19:21:48.919Z",
-      "createdAt": "2026-11-02T23:21:48.919Z"
+      "verifiedAt": "2026-11-04T18:55:21.821Z",
+      "createdAt": "2026-11-03T22:55:21.821Z"
     },
     {
       "id": "org-3",
@@ -137,7 +137,7 @@
       "capacityNote": "Weekend dry-ration and blanket outreach for 90 families.",
       "documentsSummary": "Society Registration Certificate (Pending Admin Review)",
       "verificationStatus": "pending",
-      "createdAt": "2026-11-11T15:21:48.919Z"
+      "createdAt": "2026-11-12T14:55:21.821Z"
     }
   ],
   "donations": [
@@ -154,14 +154,14 @@
       "quantityUnit": "meal bowls",
       "location": "42 Indiranagar 100ft Road",
       "city": "Bengaluru",
-      "availableFrom": "2026-11-14T14:21:48.919Z",
-      "availableUntil": "2026-11-14T19:21:48.919Z",
+      "availableFrom": "2026-11-15T13:55:21.821Z",
+      "availableUntil": "2026-11-15T18:55:21.821Z",
       "imageUrl": "/src/assets/images/donation_prepared_meals_1794669342712.jpg",
       "status": "Available",
       "foodDetails": {
         "foodType": "prepared_meals",
-        "preparedAt": "2026-11-14T13:51:48.919Z",
-        "expiresAt": "2026-11-14T20:21:48.919Z",
+        "preparedAt": "2026-11-15T13:25:21.821Z",
+        "expiresAt": "2026-11-15T19:55:21.821Z",
         "storageCondition": "Refrigerated",
         "allergens": "Sesame, Soy",
         "dietaryTags": [
@@ -177,10 +177,10 @@
           "Prepared meals always require temperature and hygiene verification by the receiving NGO or volunteer."
         ],
         "disclaimer": "Advisory check only — AI never certifies food as safe. All perishable and prepared food requires physical inspection and human verification before distribution.",
-        "checkedAt": "2026-11-14T15:21:48.920Z"
+        "checkedAt": "2026-11-15T14:55:21.821Z"
       },
-      "createdAt": "2026-11-14T14:21:48.920Z",
-      "updatedAt": "2026-11-14T14:21:48.920Z"
+      "createdAt": "2026-11-15T13:55:21.821Z",
+      "updatedAt": "2026-11-15T13:55:21.821Z"
     },
     {
       "id": "don-2",
@@ -195,13 +195,13 @@
       "quantityUnit": "kg",
       "location": "18 Koramangala 4th Block",
       "city": "Bengaluru",
-      "availableFrom": "2026-11-14T12:21:48.920Z",
-      "availableUntil": "2026-11-15T11:21:48.920Z",
+      "availableFrom": "2026-11-15T11:55:21.821Z",
+      "availableUntil": "2026-11-16T10:55:21.821Z",
       "imageUrl": "/src/assets/images/donation_fresh_produce_1794669343269.jpg",
       "status": "Scheduled",
       "foodDetails": {
         "foodType": "fruits_vegetables",
-        "expiresAt": "2026-11-16T15:21:48.919Z",
+        "expiresAt": "2026-11-17T14:55:21.821Z",
         "storageCondition": "Ambient",
         "allergens": "None",
         "dietaryTags": [
@@ -217,10 +217,10 @@
           "All required deterministic food fields provided; standard intake inspection still applies."
         ],
         "disclaimer": "Advisory check only — AI never certifies food as safe. All perishable and prepared food requires physical inspection and human verification before distribution.",
-        "checkedAt": "2026-11-14T15:21:48.920Z"
+        "checkedAt": "2026-11-15T14:55:21.821Z"
       },
-      "createdAt": "2026-11-14T11:21:48.920Z",
-      "updatedAt": "2026-11-14T13:51:48.920Z"
+      "createdAt": "2026-11-15T10:55:21.821Z",
+      "updatedAt": "2026-11-15T13:25:21.821Z"
     },
     {
       "id": "don-3",
@@ -235,8 +235,8 @@
       "quantityUnit": "kits",
       "location": "42 Indiranagar 100ft Road",
       "city": "Bengaluru",
-      "availableFrom": "2026-11-14T09:21:48.920Z",
-      "availableUntil": "2026-11-17T15:21:48.920Z",
+      "availableFrom": "2026-11-15T08:55:21.821Z",
+      "availableUntil": "2026-11-18T14:55:21.821Z",
       "imageUrl": "/src/assets/images/donation_essentials_kit_1794669344223.jpg",
       "status": "Available",
       "safetyEligibility": {
@@ -246,10 +246,10 @@
           "Non-food essential item; standard quality check at pickup applies."
         ],
         "disclaimer": "Items should be clean, intact, and suitable for community distribution.",
-        "checkedAt": "2026-11-14T15:21:48.920Z"
+        "checkedAt": "2026-11-15T14:55:21.821Z"
       },
-      "createdAt": "2026-11-14T09:21:48.920Z",
-      "updatedAt": "2026-11-14T09:21:48.920Z"
+      "createdAt": "2026-11-15T08:55:21.821Z",
+      "updatedAt": "2026-11-15T08:55:21.821Z"
     },
     {
       "id": "don-4",
@@ -264,13 +264,13 @@
       "quantityUnit": "packs",
       "location": "18 Koramangala 4th Block",
       "city": "Bengaluru",
-      "availableFrom": "2026-11-12T15:21:48.920Z",
-      "availableUntil": "2026-11-16T15:21:48.920Z",
+      "availableFrom": "2026-11-13T14:55:21.821Z",
+      "availableUntil": "2026-11-17T14:55:21.821Z",
       "imageUrl": "/src/assets/images/about_community_hub_1794669343508.jpg",
       "status": "Delivered",
       "foodDetails": {
         "foodType": "packaged_food",
-        "expiresAt": "2026-11-21T15:21:48.919Z",
+        "expiresAt": "2026-11-22T14:55:21.821Z",
         "storageCondition": "Ambient",
         "allergens": "Wheat",
         "dietaryTags": [
@@ -285,10 +285,10 @@
           "All required deterministic food fields provided; standard intake inspection still applies."
         ],
         "disclaimer": "Advisory check only — AI never certifies food as safe. All perishable and prepared food requires physical inspection and human verification before distribution.",
-        "checkedAt": "2026-11-14T15:21:48.920Z"
+        "checkedAt": "2026-11-15T14:55:21.821Z"
       },
-      "createdAt": "2026-11-12T15:21:48.920Z",
-      "updatedAt": "2026-11-13T19:21:48.920Z"
+      "createdAt": "2026-11-13T14:55:21.821Z",
+      "updatedAt": "2026-11-14T18:55:21.821Z"
     },
     {
       "id": "don-5",
@@ -303,8 +303,8 @@
       "quantityUnit": "sets",
       "location": "42 Indiranagar 100ft Road",
       "city": "Bengaluru",
-      "availableFrom": "2026-11-14T13:21:48.920Z",
-      "availableUntil": "2026-11-18T15:21:48.920Z",
+      "availableFrom": "2026-11-15T12:55:21.821Z",
+      "availableUntil": "2026-11-19T14:55:21.821Z",
       "imageUrl": "/src/assets/images/donation_essentials_kit_1794669344223.jpg",
       "status": "Available",
       "safetyEligibility": {
@@ -314,10 +314,10 @@
           "Non-food essential item; standard quality check at pickup applies."
         ],
         "disclaimer": "Items should be clean, intact, and suitable for community distribution.",
-        "checkedAt": "2026-11-14T15:21:48.920Z"
+        "checkedAt": "2026-11-15T14:55:21.821Z"
       },
-      "createdAt": "2026-11-14T13:21:48.920Z",
-      "updatedAt": "2026-11-14T13:21:48.920Z"
+      "createdAt": "2026-11-15T12:55:21.821Z",
+      "updatedAt": "2026-11-15T12:55:21.821Z"
     },
     {
       "id": "don-6",
@@ -332,8 +332,8 @@
       "quantityUnit": "packs",
       "location": "18 Koramangala 4th Block",
       "city": "Bengaluru",
-      "availableFrom": "2026-11-14T10:21:48.920Z",
-      "availableUntil": "2026-11-18T15:21:48.920Z",
+      "availableFrom": "2026-11-15T09:55:21.821Z",
+      "availableUntil": "2026-11-19T14:55:21.821Z",
       "imageUrl": "/src/assets/images/about_community_hub_1794669343508.jpg",
       "status": "Requested",
       "safetyEligibility": {
@@ -343,10 +343,10 @@
           "Non-food essential item; standard quality check at pickup applies."
         ],
         "disclaimer": "Items should be clean, intact, and suitable for community distribution.",
-        "checkedAt": "2026-11-14T15:21:48.920Z"
+        "checkedAt": "2026-11-15T14:55:21.821Z"
       },
-      "createdAt": "2026-11-14T10:21:48.920Z",
-      "updatedAt": "2026-11-14T14:21:48.920Z"
+      "createdAt": "2026-11-15T09:55:21.821Z",
+      "updatedAt": "2026-11-15T13:55:21.821Z"
     }
   ],
   "ngoNeeds": [
@@ -363,7 +363,7 @@
       "city": "Bengaluru",
       "notes": "Used for 7:00 PM community shelter dinner service.",
       "active": true,
-      "createdAt": "2026-11-13T21:21:48.920Z"
+      "createdAt": "2026-11-14T20:55:21.822Z"
     },
     {
       "id": "need-2",
@@ -378,7 +378,7 @@
       "city": "Bengaluru",
       "notes": "Needed for incoming term homework clubs (ages 6–13).",
       "active": true,
-      "createdAt": "2026-11-13T09:21:48.920Z"
+      "createdAt": "2026-11-14T08:55:21.822Z"
     },
     {
       "id": "need-3",
@@ -393,7 +393,7 @@
       "city": "Bengaluru",
       "notes": "Cooler evening temperatures require extra bedding.",
       "active": true,
-      "createdAt": "2026-11-12T23:21:48.920Z"
+      "createdAt": "2026-11-13T22:55:21.822Z"
     },
     {
       "id": "need-4",
@@ -408,7 +408,7 @@
       "city": "Bengaluru",
       "notes": "Daily dormitory care supplies.",
       "active": true,
-      "createdAt": "2026-11-12T13:21:48.920Z"
+      "createdAt": "2026-11-13T12:55:21.822Z"
     }
   ],
   "requests": [
@@ -425,8 +425,8 @@
       "requestedQuantity": "60 kg",
       "notes": "Can receive before 5:00 PM for tonight’s dinner prep.",
       "status": "Approved",
-      "createdAt": "2026-11-14T12:21:48.920Z",
-      "updatedAt": "2026-11-14T13:21:48.920Z"
+      "createdAt": "2026-11-15T11:55:21.822Z",
+      "updatedAt": "2026-11-15T12:55:21.822Z"
     },
     {
       "id": "req-2",
@@ -441,8 +441,8 @@
       "requestedQuantity": "20 packs",
       "notes": "Fits our dormitory hygiene restock list.",
       "status": "Pending",
-      "createdAt": "2026-11-14T14:21:48.920Z",
-      "updatedAt": "2026-11-14T14:21:48.920Z"
+      "createdAt": "2026-11-15T13:55:21.822Z",
+      "updatedAt": "2026-11-15T13:55:21.822Z"
     },
     {
       "id": "req-3",
@@ -457,8 +457,8 @@
       "requestedQuantity": "80 packs",
       "notes": "Weekly shelter pantry restock.",
       "status": "Fulfilled",
-      "createdAt": "2026-11-12T19:21:48.920Z",
-      "updatedAt": "2026-11-13T19:21:48.920Z"
+      "createdAt": "2026-11-13T18:55:21.822Z",
+      "updatedAt": "2026-11-14T18:55:21.822Z"
     }
   ],
   "volunteerTasks": [
@@ -479,7 +479,7 @@
       "status": "Open",
       "scheduledWindow": "Today 2:00 PM – 5:00 PM",
       "notes": "4 wooden crates; hatchback or van preferred.",
-      "createdAt": "2026-11-14T13:21:48.920Z"
+      "createdAt": "2026-11-15T12:55:21.822Z"
     },
     {
       "id": "tsk-2",
@@ -500,10 +500,10 @@
       "status": "Delivered",
       "scheduledWindow": "Completed yesterday",
       "notes": "Handed over in sealed boxes.",
-      "acceptedAt": "2026-11-13T13:21:48.920Z",
-      "pickedUpAt": "2026-11-13T15:21:48.920Z",
-      "deliveredAt": "2026-11-13T18:21:48.920Z",
-      "createdAt": "2026-11-13T09:21:48.920Z"
+      "acceptedAt": "2026-11-14T12:55:21.822Z",
+      "pickedUpAt": "2026-11-14T14:55:21.822Z",
+      "deliveredAt": "2026-11-14T17:55:21.822Z",
+      "createdAt": "2026-11-14T08:55:21.822Z"
     }
   ],
   "deliveryRecords": [
@@ -517,7 +517,7 @@
       "orgName": "Hope Haven Shelter & Kitchen",
       "volunteerId": "usr-vol-1",
       "volunteerName": "Aarav Nair",
-      "confirmedByNgoAt": "2026-11-13T19:21:48.920Z",
+      "confirmedByNgoAt": "2026-11-14T18:55:21.822Z",
       "conditionRating": "Excellent",
       "quantityConfirmed": "80 packs intact",
       "receiverNotes": "All seals checked and logged into shelter dry store."
@@ -533,7 +533,7 @@
       "reporterName": "System Onboarding Queue",
       "reason": "New NGO registration awaiting document verification by administrator.",
       "status": "Open",
-      "createdAt": "2026-11-11T17:21:48.920Z"
+      "createdAt": "2026-11-12T16:55:21.822Z"
     }
   ],
   "contactMessages": [],
@@ -546,7 +546,7 @@
       "action": "Confirmed delivery receipt",
       "targetType": "donation",
       "targetTitle": "80 Packs Whole-Grain Pasta & Lentil Dry Rations",
-      "timestamp": "2026-11-13T19:21:48.920Z"
+      "timestamp": "2026-11-14T18:55:21.822Z"
     },
     {
       "id": "act-2",
@@ -556,7 +556,7 @@
       "action": "Approved NGO request & scheduled pickup",
       "targetType": "donation",
       "targetTitle": "60 kg Fresh Apples, Kale, Carrots & Tomatoes",
-      "timestamp": "2026-11-14T13:21:48.920Z"
+      "timestamp": "2026-11-15T12:55:21.822Z"
     },
     {
       "id": "act-3",
@@ -566,7 +566,7 @@
       "action": "Requested essential items",
       "targetType": "donation",
       "targetTitle": "20 Stainless Steel Serving Trays & Hygiene Packs",
-      "timestamp": "2026-11-14T14:21:48.920Z"
+      "timestamp": "2026-11-15T13:55:21.822Z"
     },
     {
       "id": "act-4",
@@ -576,7 +576,12 @@
       "action": "Published new food surplus listing",
       "targetType": "donation",
       "targetTitle": "45 Sealed Vegetarian Quinoa & Roasted Veg Bowls",
-      "timestamp": "2026-11-14T14:21:48.920Z"
+      "timestamp": "2026-11-15T13:55:21.822Z"
     }
-  ]
+  ],
+  "siteSettings": {
+    "heroImageUrl": "/src/assets/images/hero_food_rescue_1794669342092.jpg",
+    "aboutImageUrl": "/src/assets/images/about_community_hub_1794669343508.jpg",
+    "updatedAt": "2026-11-15T14:55:21.822Z"
+  }
 }

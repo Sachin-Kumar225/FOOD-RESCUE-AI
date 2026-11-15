@@ -1,6 +1,22 @@
 import React, { useEffect, useState } from 'react';
-import { AlertTriangle, Camera, FileText, Loader2, ShieldAlert, Upload, X } from 'lucide-react';
-import { apiRequest } from '../lib/api.ts';
+import {
+  AlertTriangle,
+  Camera,
+  FileText,
+  ImagePlus,
+  Loader2,
+  ShieldAlert,
+  Upload,
+  X,
+} from 'lucide-react';
+import {
+  aiCategorizeDonationPhoto,
+  aiExtractDonationDetails,
+  aiGenerateDonationDescription,
+  saveDonationListing,
+  uploadImageAsset,
+} from '../lib/dataService.ts';
+import { PhotoEditorModal, PRESET_GALLERY_PHOTOS } from './PhotoEditorModal.tsx';
 import {
   CATEGORY_SUBCATEGORIES,
   DONATION_CATEGORIES,
@@ -18,8 +34,8 @@ interface DonationModalProps {
   onSaved: (donation: Donation) => void;
 }
 
-function toLocalDateTimeInput(iso?: string): string {
-  const date = iso ? new Date(iso) : new Date(Date.now() + 6 * 60 * 60 * 1000);
+function toLocalDateTimeInput(iso?: string, defaultOffsetHours = 6): string {
+  const date = iso ? new Date(iso) : new Date(Date.now() + defaultOffsetHours * 60 * 60 * 1000);
   if (Number.isNaN(date.getTime())) return '';
   const offset = date.getTimezoneOffset();
   const local = new Date(date.getTime() - offset * 60000);
@@ -63,6 +79,7 @@ export function DonationModal({
 
   const [aiBusy, setAiBusy] = useState<string | null>(null);
   const [aiNote, setAiNote] = useState('');
+  const [photoEditorOpen, setPhotoEditorOpen] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState('');
 
@@ -87,8 +104,8 @@ export function DonationModal({
       if (editingDonation.foodDetails) {
         setFoodType(editingDonation.foodDetails.foodType);
         setStorageCondition(editingDonation.foodDetails.storageCondition);
-        setPreparedAt(toLocalDateTimeInput(editingDonation.foodDetails.preparedAt));
-        setExpiresAt(toLocalDateTimeInput(editingDonation.foodDetails.expiresAt));
+        setPreparedAt(toLocalDateTimeInput(editingDonation.foodDetails.preparedAt, -1));
+        setExpiresAt(toLocalDateTimeInput(editingDonation.foodDetails.expiresAt, 6));
         setAllergens(editingDonation.foodDetails.allergens || '');
         setPackagingSealed(editingDonation.foodDetails.packagingSealed);
       }
@@ -123,11 +140,13 @@ export function DonationModal({
 
   const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
+    e.target.value = '';
     if (!file) return;
     if (file.size > 4.5 * 1024 * 1024) {
       setError('Image must be smaller than 4.5 MB.');
       return;
     }
+    const previousPreview = previewDataUrl;
     const reader = new FileReader();
     reader.onload = async () => {
       const dataUrl = String(reader.result || '');
@@ -135,12 +154,10 @@ export function DonationModal({
       setError('');
       setAiBusy('upload');
       try {
-        const uploaded = await apiRequest<{ url: string }>('/api/upload', {
-          method: 'POST',
-          body: JSON.stringify({ dataUrl, filename: file.name }),
-        });
-        setImageUrl(uploaded.url);
+        const uploadedUrl = await uploadImageAsset(dataUrl, file.name);
+        setImageUrl(uploadedUrl);
       } catch (err) {
+        setPreviewDataUrl(previousPreview);
         setError(err instanceof Error ? err.message : 'Image upload failed.');
       } finally {
         setAiBusy(null);
@@ -157,16 +174,7 @@ export function DonationModal({
     setAiBusy('image');
     setError('');
     try {
-      const res = await apiRequest<{
-        category: DonationCategory;
-        subCategory: string;
-        suggestedTitle: string;
-        suggestedUnit: string;
-        confidenceNote: string;
-      }>('/api/ai/categorize-image', {
-        method: 'POST',
-        body: JSON.stringify({ dataUrl: previewDataUrl }),
-      });
+      const res = await aiCategorizeDonationPhoto(previewDataUrl);
       setCategory(res.category);
       setSubCategory(res.subCategory);
       if (!title.trim()) setTitle(res.suggestedTitle);
@@ -187,23 +195,7 @@ export function DonationModal({
     setAiBusy('extract');
     setError('');
     try {
-      const res = await apiRequest<{
-        title: string;
-        category: DonationCategory;
-        subCategory: string;
-        quantityValue: number;
-        quantityUnit: string;
-        city: string;
-        location: string;
-        foodType?: FoodType;
-        storageCondition?: StorageCondition;
-        allergens?: string;
-        packagingSealed?: boolean;
-        extractionNotes: string;
-      }>('/api/ai/extract-details', {
-        method: 'POST',
-        body: JSON.stringify({ text: quickText }),
-      });
+      const res = await aiExtractDonationDetails(quickText);
       setTitle(res.title);
       setCategory(res.category);
       setSubCategory(res.subCategory);
@@ -231,21 +223,15 @@ export function DonationModal({
     setAiBusy('describe');
     setError('');
     try {
-      const res = await apiRequest<{ description: string; aiPowered: boolean }>(
-        '/api/ai/generate-description',
-        {
-          method: 'POST',
-          body: JSON.stringify({
-            title,
-            category,
-            subCategory,
-            quantityValue: Number(quantityValue),
-            quantityUnit,
-            city,
-            notes: quickText || undefined,
-          }),
-        }
-      );
+      const res = await aiGenerateDonationDescription({
+        title,
+        category,
+        subCategory,
+        quantityValue: Number(quantityValue),
+        quantityUnit,
+        city,
+        notes: quickText || undefined,
+      });
       setDescription(res.description);
       setAiNote(
         res.aiPowered
@@ -261,12 +247,29 @@ export function DonationModal({
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (submitting || aiBusy === 'upload') return;
     setError('');
 
     const qty = Number(quantityValue);
-    if (!title.trim() || !description.trim() || !location.trim() || !city.trim() || qty <= 0) {
+    if (
+      !title.trim() ||
+      !description.trim() ||
+      !location.trim() ||
+      !city.trim() ||
+      !quantityUnit.trim() ||
+      !Number.isFinite(qty) ||
+      qty <= 0
+    ) {
       setError('Please complete all required listing fields.');
       return;
+    }
+
+    if (category === 'Food' && foodType === 'prepared_meals' && preparedAt) {
+      const preparedMs = new Date(preparedAt).getTime();
+      if (!Number.isNaN(preparedMs) && preparedMs > Date.now() + 5 * 60 * 1000) {
+        setError('Prepared At timestamp cannot be in the future.');
+        return;
+      }
     }
 
     const payload = {
@@ -297,24 +300,19 @@ export function DonationModal({
           : undefined,
     };
 
+    if (!user) {
+      setError('Please sign in to publish a donation.');
+      return;
+    }
+    if (user.role !== 'donor' && user.role !== 'admin') {
+      setError('Only Donor or Administrator accounts can publish donation listings.');
+      return;
+    }
+
     setSubmitting(true);
     try {
-      if (editingDonation) {
-        const res = await apiRequest<{ donation: Donation }>(
-          `/api/donations/${editingDonation.id}`,
-          {
-            method: 'PUT',
-            body: JSON.stringify(payload),
-          }
-        );
-        onSaved(res.donation);
-      } else {
-        const res = await apiRequest<{ donation: Donation }>('/api/donations', {
-          method: 'POST',
-          body: JSON.stringify(payload),
-        });
-        onSaved(res.donation);
-      }
+      const saved = await saveDonationListing(editingDonation?.id || null, payload, user);
+      onSaved(saved);
       onClose();
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to save donation.');
@@ -390,11 +388,11 @@ export function DonationModal({
             </div>
           )}
 
-          {/* Photo upload + AI image categorization */}
+          {/* Photo upload + editor + AI image categorization */}
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 items-start">
             <div className="space-y-2">
               <label className="block text-xs font-semibold text-[#0F1F17]">
-                Donation Photo (Optional)
+                Donation Photo (Editable)
               </label>
               <div className="flex flex-wrap items-center gap-2">
                 <label className="inline-flex items-center gap-2 px-3.5 py-2 text-xs font-medium rounded-lg border border-emerald-950/15 bg-white hover:bg-emerald-50 cursor-pointer">
@@ -407,6 +405,15 @@ export function DonationModal({
                     className="hidden"
                   />
                 </label>
+
+                <button
+                  type="button"
+                  onClick={() => setPhotoEditorOpen(true)}
+                  className="inline-flex items-center gap-1.5 px-3.5 py-2 text-xs font-medium rounded-lg border border-emerald-950/15 bg-white hover:bg-emerald-50"
+                >
+                  <ImagePlus className="w-3.5 h-3.5 text-emerald-700" />
+                  <span>Edit / Crop Photo</span>
+                </button>
 
                 {previewDataUrl && (
                   <button
@@ -427,7 +434,7 @@ export function DonationModal({
             </div>
 
             {(previewDataUrl || imageUrl) && (
-              <div className="h-24 rounded-lg overflow-hidden border border-emerald-950/10 bg-[#F8FAF9]">
+              <div className="relative h-24 rounded-lg overflow-hidden border border-emerald-950/10 bg-[#F8FAF9]">
                 <img
                   src={previewDataUrl || imageUrl}
                   alt="Donation preview"
@@ -693,15 +700,32 @@ export function DonationModal({
             </button>
             <button
               type="submit"
-              disabled={submitting}
+              disabled={submitting || aiBusy === 'upload'}
               className="inline-flex items-center gap-2 px-5 py-2 text-sm font-medium rounded-lg bg-emerald-700 text-white hover:bg-emerald-800 disabled:opacity-50"
             >
-              {submitting && <Loader2 className="w-4 h-4 animate-spin" />}
-              <span>{editingDonation ? 'Save Changes' : 'Publish Donation'}</span>
+              {(submitting || aiBusy === 'upload') && <Loader2 className="w-4 h-4 animate-spin" />}
+              <span>
+                {aiBusy === 'upload'
+                  ? 'Uploading Photo...'
+                  : editingDonation
+                    ? 'Save Changes'
+                    : 'Publish Donation'}
+              </span>
             </button>
           </div>
         </form>
       </div>
+
+      <PhotoEditorModal
+        isOpen={photoEditorOpen}
+        title={title.trim() || 'Donation Listing'}
+        initialUrl={previewDataUrl || imageUrl || PRESET_GALLERY_PHOTOS[2].url}
+        onClose={() => setPhotoEditorOpen(false)}
+        onSave={({ url, dataUrl }) => {
+          setImageUrl(url);
+          setPreviewDataUrl(dataUrl);
+        }}
+      />
     </div>
   );
 }

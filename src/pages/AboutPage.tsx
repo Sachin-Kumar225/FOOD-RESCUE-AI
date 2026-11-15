@@ -1,8 +1,33 @@
-import { AlertTriangle, BookOpen, CheckCircle2, HeartHandshake, Home, Utensils } from 'lucide-react';
+import { useState } from 'react';
+import {
+  AlertTriangle,
+  BookOpen,
+  CheckCircle2,
+  HeartHandshake,
+  Home,
+  ImagePlus,
+  Utensils,
+} from 'lucide-react';
 import { SafeImage } from '../components/SafeImage.tsx';
+import { PhotoEditorModal } from '../components/PhotoEditorModal.tsx';
+import { updateSiteSettings } from '../lib/dataService.ts';
+import { useAuth } from '../context/AuthContext.tsx';
+import type { SiteSettings } from '../types.ts';
 import type { PageRoute } from '../components/Navbar.tsx';
 
-export function AboutPage({ onNavigate }: { onNavigate: (page: PageRoute) => void }) {
+interface AboutPageProps {
+  siteSettings: SiteSettings | null;
+  onRefresh: () => Promise<void>;
+  onNavigate: (page: PageRoute) => void;
+}
+
+export function AboutPage({ siteSettings, onRefresh, onNavigate }: AboutPageProps) {
+  const { user } = useAuth();
+  const [editingPhoto, setEditingPhoto] = useState(false);
+
+  const aboutUrl =
+    siteSettings?.aboutImageUrl || '/src/assets/images/about_community_hub_1794669343508.jpg';
+
   return (
     <div className="bg-white py-12 lg:py-16">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-16">
@@ -25,7 +50,7 @@ export function AboutPage({ onNavigate }: { onNavigate: (page: PageRoute) => voi
             <div className="pt-2">
               <button
                 type="button"
-                onClick={() => onNavigate('auth')}
+                onClick={() => onNavigate('register')}
                 className="px-5 py-2.5 text-sm font-semibold text-white bg-emerald-700 hover:bg-emerald-800 rounded-lg transition-colors"
               >
                 Join as Donor, NGO, or Volunteer
@@ -34,12 +59,22 @@ export function AboutPage({ onNavigate }: { onNavigate: (page: PageRoute) => voi
           </div>
 
           <div className="lg:col-span-6">
-            <div className="h-72 sm:h-96 lg:h-full min-h-[300px] rounded-xl overflow-hidden border border-emerald-950/10">
+            <div className="relative h-72 sm:h-96 lg:h-full min-h-[300px] rounded-xl overflow-hidden border border-emerald-950/10">
               <SafeImage
-                src="/src/assets/images/about_community_hub_1794669343508.jpg"
+                src={aboutUrl}
                 alt="Restaurant staff and community volunteers sorting green crates of packaged groceries and fruit"
                 className="w-full h-full object-cover"
               />
+              {user?.role === 'admin' && (
+                <button
+                  type="button"
+                  onClick={() => setEditingPhoto(true)}
+                  className="absolute bottom-3 right-3 inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold rounded-lg bg-white/95 text-[#0F1F17] border border-emerald-950/15 shadow-xs hover:bg-white"
+                >
+                  <ImagePlus className="w-3.5 h-3.5 text-emerald-700" />
+                  <span>Edit Photo</span>
+                </button>
+              )}
             </div>
           </div>
         </div>
@@ -164,6 +199,17 @@ export function AboutPage({ onNavigate }: { onNavigate: (page: PageRoute) => voi
           </div>
         </section>
       </div>
+
+      <PhotoEditorModal
+        isOpen={editingPhoto}
+        title="About Mission Photo"
+        initialUrl={aboutUrl}
+        onClose={() => setEditingPhoto(false)}
+        onSave={async ({ url }) => {
+          await updateSiteSettings({ aboutImageUrl: url });
+          await onRefresh();
+        }}
+      />
     </div>
   );
 }
