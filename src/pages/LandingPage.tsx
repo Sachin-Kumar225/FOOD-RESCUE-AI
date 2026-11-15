@@ -12,6 +12,7 @@ import { SafeImage } from '../components/SafeImage.tsx';
 import { DonationStatusLabel } from '../components/StatusLabel.tsx';
 import { PhotoEditorModal } from '../components/PhotoEditorModal.tsx';
 import { updateDonationPhoto, updateSiteSettings } from '../lib/dataService.ts';
+import { getDefaultDonationImage, resolveImageUrl, STATIC_IMAGES } from '../lib/imageUtils.ts';
 import type { PageRoute } from '../components/Navbar.tsx';
 import type { Donation, PlatformStats, SiteSettings, UserRole } from '../types.ts';
 import { useAuth } from '../context/AuthContext.tsx';
@@ -33,8 +34,7 @@ export function LandingPage({
 }: LandingPageProps) {
   const { user } = useAuth();
   const featuredDonations = donations.filter((d) => d.status === 'Available').slice(0, 3);
-  const heroUrl =
-    siteSettings?.heroImageUrl || '/src/assets/images/hero_food_rescue_1794669342092.jpg';
+  const heroUrl = resolveImageUrl(siteSettings?.heroImageUrl, STATIC_IMAGES.hero);
 
   const [photoEditTarget, setPhotoEditTarget] = useState<{
     kind: 'hero' | 'donation';
@@ -110,6 +110,7 @@ export function LandingPage({
             <div className="relative h-72 sm:h-96 lg:h-full min-h-[340px] rounded-xl overflow-hidden border border-emerald-950/10 bg-[#F8FAF9]">
               <SafeImage
                 src={heroUrl}
+                fallbackSrc={STATIC_IMAGES.hero}
                 alt="Volunteers packing fresh produce, bread, and prepared meal boxes at a community food rescue hub"
                 className="w-full h-full object-cover"
               />
@@ -272,6 +273,7 @@ export function LandingPage({
                   <div className="relative h-48 bg-[#F8FAF9] border-b border-emerald-950/10">
                     <SafeImage
                       src={item.imageUrl}
+                      fallbackSrc={getDefaultDonationImage(item.category)}
                       alt={item.title}
                       fallbackTitle={item.title}
                       className="w-full h-full object-cover"

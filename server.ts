@@ -47,7 +47,8 @@ async function startServer() {
 
   app.use(express.json({ limit: '8mb' }));
   app.use('/uploads', express.static(UPLOADS_DIR));
-  app.use('/src/assets/images', express.static(path.join(process.cwd(), 'src/assets/images')));
+  app.use('/images', express.static(path.join(process.cwd(), 'public/images')));
+  app.use('/src/assets/images', express.static(path.join(process.cwd(), 'public/images')));
 
   // Health & status
   app.get('/api/health', (_req, res) => {
@@ -442,10 +443,10 @@ async function startServer() {
       }
 
       const defaultImages: Record<DonationCategory, string> = {
-        Food: '/src/assets/images/donation_prepared_meals_1794669342712.jpg',
-        'Clothing & Warmth': '/src/assets/images/donation_essentials_kit_1794669344223.jpg',
-        'Education & Children': '/src/assets/images/donation_essentials_kit_1794669344223.jpg',
-        'Household & Daily Needs': '/src/assets/images/about_community_hub_1794669343508.jpg',
+        Food: '/images/donation_prepared_meals_1794669342712.jpg',
+        'Clothing & Warmth': '/images/donation_essentials_kit_1794669344223.jpg',
+        'Education & Children': '/images/donation_essentials_kit_1794669344223.jpg',
+        'Household & Daily Needs': '/images/about_community_hub_1794669343508.jpg',
       };
 
       const nowIso = new Date().toISOString();

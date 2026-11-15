@@ -17,6 +17,8 @@ import {
   uploadImageAsset,
 } from '../lib/dataService.ts';
 import { PhotoEditorModal, PRESET_GALLERY_PHOTOS } from './PhotoEditorModal.tsx';
+import { SafeImage } from './SafeImage.tsx';
+import { getDefaultDonationImage, resolveImageUrl } from '../lib/imageUtils.ts';
 import {
   CATEGORY_SUBCATEGORIES,
   DONATION_CATEGORIES,
@@ -100,7 +102,7 @@ export function DonationModal({
       setCity(editingDonation.city);
       setLocation(editingDonation.location);
       setAvailableUntil(toLocalDateTimeInput(editingDonation.availableUntil));
-      setImageUrl(editingDonation.imageUrl);
+      setImageUrl(resolveImageUrl(editingDonation.imageUrl));
       if (editingDonation.foodDetails) {
         setFoodType(editingDonation.foodDetails.foodType);
         setStorageCondition(editingDonation.foodDetails.storageCondition);
@@ -435,8 +437,9 @@ export function DonationModal({
 
             {(previewDataUrl || imageUrl) && (
               <div className="relative h-24 rounded-lg overflow-hidden border border-emerald-950/10 bg-[#F8FAF9]">
-                <img
+                <SafeImage
                   src={previewDataUrl || imageUrl}
+                  fallbackSrc={getDefaultDonationImage(category)}
                   alt="Donation preview"
                   className="w-full h-full object-cover"
                 />

@@ -26,6 +26,7 @@ import { isSupabaseConfigured } from '../../lib/supabase.ts';
 import { DonationStatusLabel, VerificationLabel } from '../../components/StatusLabel.tsx';
 import { SafeImage } from '../../components/SafeImage.tsx';
 import { PhotoEditorModal } from '../../components/PhotoEditorModal.tsx';
+import { getDefaultDonationImage, resolveImageUrl, STATIC_IMAGES } from '../../lib/imageUtils.ts';
 import type { ActivityLog, Donation, SiteSettings, User } from '../../types.ts';
 
 interface AdminWorkspaceProps {
@@ -184,10 +185,8 @@ export function AdminWorkspace({
     );
   }
 
-  const heroUrl =
-    siteSettings?.heroImageUrl || '/src/assets/images/hero_food_rescue_1794669342092.jpg';
-  const aboutUrl =
-    siteSettings?.aboutImageUrl || '/src/assets/images/about_community_hub_1794669343508.jpg';
+  const heroUrl = resolveImageUrl(siteSettings?.heroImageUrl, STATIC_IMAGES.hero);
+  const aboutUrl = resolveImageUrl(siteSettings?.aboutImageUrl, STATIC_IMAGES.about);
 
   return (
     <div className="space-y-8">
@@ -205,7 +204,12 @@ export function AdminWorkspace({
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <div className="border border-slate-200/90 rounded-2xl shadow-[0_1px_2px_rgba(15,23,42,0.04)] overflow-hidden bg-[#F8FAFC]">
             <div className="h-36">
-              <SafeImage src={heroUrl} alt="Hero Banner" className="w-full h-full object-cover" />
+              <SafeImage
+                src={heroUrl}
+                fallbackSrc={STATIC_IMAGES.hero}
+                alt="Hero Banner"
+                className="w-full h-full object-cover"
+              />
             </div>
             <div className="p-3.5 bg-white flex items-center justify-between gap-2">
               <div>
@@ -229,6 +233,7 @@ export function AdminWorkspace({
             <div className="h-36">
               <SafeImage
                 src={aboutUrl}
+                fallbackSrc={STATIC_IMAGES.about}
                 alt="About Mission Banner"
                 className="w-full h-full object-cover"
               />
@@ -374,6 +379,7 @@ export function AdminWorkspace({
                       <div className="w-12 h-10 rounded overflow-hidden border border-slate-200/80">
                         <SafeImage
                           src={d.imageUrl}
+                          fallbackSrc={getDefaultDonationImage(d.category)}
                           alt={d.title}
                           className="w-full h-full object-cover"
                         />

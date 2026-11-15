@@ -11,6 +11,7 @@ import {
 import { SafeImage } from '../components/SafeImage.tsx';
 import { PhotoEditorModal } from '../components/PhotoEditorModal.tsx';
 import { updateSiteSettings } from '../lib/dataService.ts';
+import { resolveImageUrl, STATIC_IMAGES } from '../lib/imageUtils.ts';
 import { useAuth } from '../context/AuthContext.tsx';
 import type { SiteSettings } from '../types.ts';
 import type { PageRoute } from '../components/Navbar.tsx';
@@ -25,8 +26,7 @@ export function AboutPage({ siteSettings, onRefresh, onNavigate }: AboutPageProp
   const { user } = useAuth();
   const [editingPhoto, setEditingPhoto] = useState(false);
 
-  const aboutUrl =
-    siteSettings?.aboutImageUrl || '/src/assets/images/about_community_hub_1794669343508.jpg';
+  const aboutUrl = resolveImageUrl(siteSettings?.aboutImageUrl, STATIC_IMAGES.about);
 
   return (
     <div className="bg-white py-12 lg:py-16">
@@ -62,6 +62,7 @@ export function AboutPage({ siteSettings, onRefresh, onNavigate }: AboutPageProp
             <div className="relative h-72 sm:h-96 lg:h-full min-h-[300px] rounded-xl overflow-hidden border border-emerald-950/10">
               <SafeImage
                 src={aboutUrl}
+                fallbackSrc={STATIC_IMAGES.about}
                 alt="Restaurant staff and community volunteers sorting green crates of packaged groceries and fruit"
                 className="w-full h-full object-cover"
               />

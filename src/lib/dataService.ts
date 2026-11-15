@@ -1,4 +1,5 @@
 import { apiRequest } from './api.ts';
+import { getDefaultDonationImage, resolveImageUrl, STATIC_IMAGES } from './imageUtils.ts';
 import { evaluateFoodSafetyEligibilityClient } from './safety.ts';
 import { isSupabaseConfigured, supabase } from './supabase.ts';
 import {
@@ -78,7 +79,10 @@ export function mapDonationRow(row: Record<string, any>): Donation {
     city: String(row.city || ''),
     availableFrom: String(row.available_from || row.created_at),
     availableUntil: String(row.available_until),
-    imageUrl: String(row.image_url || ''),
+    imageUrl: resolveImageUrl(
+      row.image_url,
+      getDefaultDonationImage(row.category as DonationCategory)
+    ),
     status: row.status as Donation['status'],
     foodDetails: (row.food_details || undefined) as FoodDetails | undefined,
     safetyEligibility: row.safety_eligibility as Donation['safetyEligibility'],
@@ -212,16 +216,7 @@ export function mapActivityRow(row: Record<string, any>): ActivityLog {
 }
 
 function defaultImageForCategory(category: DonationCategory): string {
-  switch (category) {
-    case 'Food':
-      return '/src/assets/images/donation_prepared_meals_1794669342712.jpg';
-    case 'Clothing & Warmth':
-    case 'Education & Children':
-    case 'Household & Daily Needs':
-      return '/src/assets/images/donation_essentials_kit_1794669344223.jpg';
-    default:
-      return '/src/assets/images/donation_fresh_produce_1794669343269.jpg';
-  }
+  return getDefaultDonationImage(category);
 }
 
 function dataUrlToBlob(dataUrl: string): { blob: Blob; ext: string; contentType: string } {
@@ -413,20 +408,24 @@ export async function fetchSiteSettings(): Promise<SiteSettings> {
       .maybeSingle();
     if (!error && data) {
       return {
-        heroImageUrl: String(data.hero_image_url),
-        aboutImageUrl: String(data.about_image_url),
+        heroImageUrl: resolveImageUrl(data.hero_image_url, STATIC_IMAGES.hero),
+        aboutImageUrl: resolveImageUrl(data.about_image_url, STATIC_IMAGES.about),
         updatedAt: String(data.updated_at),
       };
     }
     return {
-      heroImageUrl: '/src/assets/images/hero_food_rescue_1794669342092.jpg',
-      aboutImageUrl: '/src/assets/images/about_community_hub_1794669343508.jpg',
+      heroImageUrl: STATIC_IMAGES.hero,
+      aboutImageUrl: STATIC_IMAGES.about,
       updatedAt: new Date().toISOString(),
     };
   }
 
   const res = await apiRequest<{ siteSettings: SiteSettings }>('/api/site-settings');
-  return res.siteSettings;
+  return {
+    ...res.siteSettings,
+    heroImageUrl: resolveImageUrl(res.siteSettings?.heroImageUrl, STATIC_IMAGES.hero),
+    aboutImageUrl: resolveImageUrl(res.siteSettings?.aboutImageUrl, STATIC_IMAGES.about),
+  };
 }
 
 export async function updateSiteSettings(patch: {

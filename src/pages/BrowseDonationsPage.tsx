@@ -19,6 +19,7 @@ import { SafeImage } from '../components/SafeImage.tsx';
 import { DonationStatusLabel } from '../components/StatusLabel.tsx';
 import { NgoMatchModal } from '../components/NgoMatchModal.tsx';
 import { PhotoEditorModal } from '../components/PhotoEditorModal.tsx';
+import { getDefaultDonationImage } from '../lib/imageUtils.ts';
 import {
   DONATION_CATEGORIES,
   DONATION_STATUS_ORDER,
@@ -284,6 +285,7 @@ export function BrowseDonationsPage({
                   <div className="relative h-44 bg-[#F8FAF9] border-b border-emerald-950/10">
                     <SafeImage
                       src={item.imageUrl}
+                      fallbackSrc={getDefaultDonationImage(item.category)}
                       alt={item.title}
                       fallbackTitle={item.title}
                       className="w-full h-full object-cover"

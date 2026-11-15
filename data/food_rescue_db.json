@@ -156,7 +156,7 @@
       "city": "Bengaluru",
       "availableFrom": "2026-11-15T13:55:21.821Z",
       "availableUntil": "2026-11-15T18:55:21.821Z",
-      "imageUrl": "/src/assets/images/donation_prepared_meals_1794669342712.jpg",
+      "imageUrl": "/images/donation_prepared_meals_1794669342712.jpg",
       "status": "Available",
       "foodDetails": {
         "foodType": "prepared_meals",
@@ -197,7 +197,7 @@
       "city": "Bengaluru",
       "availableFrom": "2026-11-15T11:55:21.821Z",
       "availableUntil": "2026-11-16T10:55:21.821Z",
-      "imageUrl": "/src/assets/images/donation_fresh_produce_1794669343269.jpg",
+      "imageUrl": "/images/donation_fresh_produce_1794669343269.jpg",
       "status": "Scheduled",
       "foodDetails": {
         "foodType": "fruits_vegetables",
@@ -237,7 +237,7 @@
       "city": "Bengaluru",
       "availableFrom": "2026-11-15T08:55:21.821Z",
       "availableUntil": "2026-11-18T14:55:21.821Z",
-      "imageUrl": "/src/assets/images/donation_essentials_kit_1794669344223.jpg",
+      "imageUrl": "/images/donation_essentials_kit_1794669344223.jpg",
       "status": "Available",
       "safetyEligibility": {
         "eligible": true,
@@ -266,7 +266,7 @@
       "city": "Bengaluru",
       "availableFrom": "2026-11-13T14:55:21.821Z",
       "availableUntil": "2026-11-17T14:55:21.821Z",
-      "imageUrl": "/src/assets/images/about_community_hub_1794669343508.jpg",
+      "imageUrl": "/images/about_community_hub_1794669343508.jpg",
       "status": "Delivered",
       "foodDetails": {
         "foodType": "packaged_food",
@@ -305,7 +305,7 @@
       "city": "Bengaluru",
       "availableFrom": "2026-11-15T12:55:21.821Z",
       "availableUntil": "2026-11-19T14:55:21.821Z",
-      "imageUrl": "/src/assets/images/donation_essentials_kit_1794669344223.jpg",
+      "imageUrl": "/images/donation_essentials_kit_1794669344223.jpg",
       "status": "Available",
       "safetyEligibility": {
         "eligible": true,
@@ -334,7 +334,7 @@
       "city": "Bengaluru",
       "availableFrom": "2026-11-15T09:55:21.821Z",
       "availableUntil": "2026-11-19T14:55:21.821Z",
-      "imageUrl": "/src/assets/images/about_community_hub_1794669343508.jpg",
+      "imageUrl": "/images/about_community_hub_1794669343508.jpg",
       "status": "Requested",
       "safetyEligibility": {
         "eligible": true,
@@ -580,8 +580,8 @@
     }
   ],
   "siteSettings": {
-    "heroImageUrl": "/src/assets/images/hero_food_rescue_1794669342092.jpg",
-    "aboutImageUrl": "/src/assets/images/about_community_hub_1794669343508.jpg",
+    "heroImageUrl": "/images/hero_food_rescue_1794669342092.jpg",
+    "aboutImageUrl": "/images/about_community_hub_1794669343508.jpg",
     "updatedAt": "2026-11-15T14:55:21.822Z"
   }
 }

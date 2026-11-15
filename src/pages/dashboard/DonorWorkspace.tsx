@@ -20,6 +20,7 @@ import {
 } from '../../lib/dataService.ts';
 import { SafeImage } from '../../components/SafeImage.tsx';
 import { DonationStatusLabel } from '../../components/StatusLabel.tsx';
+import { getDefaultDonationImage } from '../../lib/imageUtils.ts';
 import { PhotoEditorModal } from '../../components/PhotoEditorModal.tsx';
 import type { Donation, DonationRequest, User, VolunteerTask } from '../../types.ts';
 
@@ -297,6 +298,7 @@ export function DonorWorkspace({
                   <div className="relative sm:w-44 h-44 sm:h-auto shrink-0 bg-slate-100">
                     <SafeImage
                       src={item.imageUrl}
+                      fallbackSrc={getDefaultDonationImage(item.category)}
                       alt={item.title}
                       fallbackTitle={item.title}
                       className="w-full h-full object-cover"

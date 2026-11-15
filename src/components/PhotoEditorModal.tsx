@@ -10,27 +10,28 @@ import {
   X,
 } from 'lucide-react';
 import { uploadImageAsset } from '../lib/dataService.ts';
+import { resolveImageUrl, STATIC_IMAGES } from '../lib/imageUtils.ts';
 
 export const PRESET_GALLERY_PHOTOS = [
   {
     label: 'Community Hub',
-    url: '/src/assets/images/hero_food_rescue_1794669342092.jpg',
+    url: STATIC_IMAGES.hero,
   },
   {
     label: 'Pantry Sorting',
-    url: '/src/assets/images/about_community_hub_1794669343508.jpg',
+    url: STATIC_IMAGES.about,
   },
   {
     label: 'Prepared Meals',
-    url: '/src/assets/images/donation_prepared_meals_1794669342712.jpg',
+    url: STATIC_IMAGES.preparedMeals,
   },
   {
     label: 'Fresh Produce',
-    url: '/src/assets/images/donation_fresh_produce_1794669343269.jpg',
+    url: STATIC_IMAGES.freshProduce,
   },
   {
     label: 'Warmth & Books',
-    url: '/src/assets/images/donation_essentials_kit_1794669344223.jpg',
+    url: STATIC_IMAGES.essentialsKit,
   },
 ];
 
@@ -68,7 +69,7 @@ export function PhotoEditorModal({
 
   useEffect(() => {
     if (!isOpen) return;
-    setSourceUrl(initialUrl || PRESET_GALLERY_PHOTOS[2].url);
+    setSourceUrl(resolveImageUrl(initialUrl, PRESET_GALLERY_PHOTOS[2].url));
     setRotation(0);
     setFlipH(false);
     setFlipV(false);

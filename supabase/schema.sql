@@ -185,8 +185,8 @@ create table if not exists public.activity_logs (
 -- Editorial Site Settings (Hero & About photos)
 create table if not exists public.site_settings (
   id int primary key check (id = 1) default 1,
-  hero_image_url text not null default '/src/assets/images/hero_food_rescue_1794669342092.jpg',
-  about_image_url text not null default '/src/assets/images/about_community_hub_1794669343508.jpg',
+  hero_image_url text not null default '/images/hero_food_rescue_1794669342092.jpg',
+  about_image_url text not null default '/images/about_community_hub_1794669343508.jpg',
   updated_at timestamptz not null default now()
 );
 
